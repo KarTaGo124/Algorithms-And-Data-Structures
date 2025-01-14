@@ -2,24 +2,39 @@
 // Created by Guillermo Galvez on 07/01/2025.
 //
 #include <iostream>
-using namespace std;
 
 template <typename T>
 struct Node {
+    // Data of the node
     T data;
+    // Pointer to the next node
     Node* next;
+    // Constructor
     Node() : next(nullptr) {}
+    // Constructor with data
     explicit Node(T data) : data(data), next(nullptr) {}
+    // Destructor
     ~Node() = default;
 };
 
 template <typename T>
 class ForwardList {
 private:
+    // Pointer to the first element in the list
     Node<T>* head;
 public:
+    // Constructor
     ForwardList(): head(nullptr){}
-    explicit ForwardList(Node<T>* head):head(head) {};
+    // Destructor
+    ~ForwardList(){
+        Node<T>* temp;
+        while (head != nullptr){
+            temp = head;
+            head = head->next;
+            delete temp;
+        }
+    }
+    // Prints the elements in the list
     void print(){
         if (head == nullptr) {cout << "Elements: []" << endl;}
         else {
@@ -32,10 +47,12 @@ public:
             cout << temp->data << "]" << endl;
         }
     }
+    // Returns the first element in the list
     T front(){
         if (head == nullptr) return -1;
         else return head->data;
     }
+    // Returns the last element in the list
     T back(){
         Node<T>* temp = head;
         if (head == nullptr) return -1;
@@ -44,11 +61,13 @@ public:
         }
         return temp->data;
     }
+    // Adds a new element at the beginning of the list
     void push_front(T value){
         auto new_head = new Node<T>(value);
         new_head->next = head;
         head = new_head;
     }
+    // Adds a new element at the end of the list
     void push_back(T value){
         auto new_tail = new Node<T>(value);
         if (head == nullptr) {head = new_tail;}
@@ -61,6 +80,7 @@ public:
             new_tail->next = nullptr;
         }
     }
+    // Removes the first element in the list
     T pop_front(){
         if (head == nullptr) {return -1;}
         else {
@@ -71,6 +91,7 @@ public:
             return value;
         }
     }
+    // Removes the last element in the list
     T pop_back(){
         if (head == nullptr) {return -1;}
         else if (head->next == nullptr) {
@@ -88,6 +109,7 @@ public:
         temp->next = nullptr;
         return value;
     }
+    // Returns the element at the specified position in the list
     T operator[](int position){
         if (head == nullptr) {return -1;}
         else {
@@ -101,9 +123,11 @@ public:
             else return -1;
         }
     }
+    // Returns true if the list is empty, false otherwise
     bool empty(){
         return head == nullptr;
     }
+    // Returns the number of elements in the list
     int size(){
         if (head == nullptr) {return 0;}
         else {
@@ -116,6 +140,7 @@ public:
             return i;
         }
     }
+    // Clears the list
     void clear(){
         Node<T>* temp;
         while (head != nullptr){
@@ -124,11 +149,51 @@ public:
             delete temp;
         }
     }
+
+    // Sorts the list in ascending order using insertion sort
     void sort(){
+        if (head == nullptr || head->next == nullptr) {return ;}
 
+        auto prevHead = new Node<T>(0);
+        prevHead->next = head;
+        auto current = head;
+
+        while (current != nullptr && current->next != nullptr) {
+            if (current->data <= current->next->data) {
+                current = current->next;
+                continue;
+            }
+
+            auto toInsert = current->next;
+            current->next = current->next->next;
+
+            auto prev = prevHead;
+            while (prev->next->data < toInsert->data) {
+                prev = prev->next;
+            }
+
+            toInsert->next = prev->next;
+            prev->next = toInsert;
+
+        }
+        head = prevHead->next;
+        delete prevHead;
     }
-    void reverse(){
 
+    // Reverses the list
+    void reverse(){
+        if(head == nullptr || head->next == nullptr) return ;
+
+        auto current = head;
+        Node<T>* newHead = nullptr;
+
+        while (current != nullptr) {
+            auto nextNode = current->next;
+            current->next = newHead;
+            newHead = current;
+            current = nextNode;
+        }
+        head = newHead;
     }
 };
 int main(){
@@ -201,8 +266,28 @@ int main(){
     cout << "Clearing the forward list..." << endl;
     list2.print();
 
+
+
+    cout << "---------------------------------------------------------------------" << endl;
+    cout << "Testing sort() and reverse() in a forward list with elements" << endl;
+    cout << "---------------------------------------------------------------------" << endl;
+
+    ForwardList<int> list4;
+    list4.push_back(3);
+    list4.push_back(5);
+    list4.push_back(2);
+    list4.push_back(10);
+    list4.push_back(6);
+    cout << "Original list" << endl;
+    list4.print();
+    cout << "Sorting the list" << endl;
+    list4.sort();
+    list4.print();
+    cout << "Reversing the list" << endl;
+    list4.reverse();
+    list4.print();
+
     cout << "---------------------------------------------------------------------" << endl;
     cout << "Obs: I am using -1 for exceptions in the returns" << endl;
     cout << "---------------------------------------------------------------------" << endl;
-
 }
