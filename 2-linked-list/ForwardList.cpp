@@ -2,6 +2,7 @@
 // Created by Guillermo Galvez on 07/01/2025.
 //
 #include <iostream>
+using namespace std;
 
 template <typename T>
 struct Node {
@@ -12,12 +13,13 @@ struct Node {
     // Constructor
     Node() : next(nullptr) {}
     // Constructor with data
-    explicit Node(T data) : data(data), next(nullptr) {}
+    explicit Node(const T& data) : data(data), next(nullptr) {}
     // Destructor
     ~Node() = default;
 };
 
 template <typename T>
+// Class that represents a forward list
 class ForwardList {
 private:
     // Pointer to the first element in the list
@@ -27,12 +29,7 @@ public:
     ForwardList(): head(nullptr){}
     // Destructor
     ~ForwardList(){
-        Node<T>* temp;
-        while (head != nullptr){
-            temp = head;
-            head = head->next;
-            delete temp;
-        }
+        clear();
     }
     // Prints the elements in the list
     void print(){
