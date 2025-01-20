@@ -7,4 +7,6 @@ add_executable(PointersArrays 1-pointers-and-arrays/PointersArrays.cpp)
 add_executable(LinkedList 2-linked-list/ForwardList.cpp)
 add_executable(CircularDoublyLinkedList 3-doubly-linked-list/CircularDoublyLinkedList.cpp)
 add_executable(DoublyLinkedList 3-doubly-linked-list/DoublyLinkedList.cpp)
-
+add_executable(Stack 4-stack/Stack.cpp)
+add_executable(Queue 5-queue/Queue.cpp)
+add_executable(CircularQueue 5-queue/CircularQueue.cpp)
