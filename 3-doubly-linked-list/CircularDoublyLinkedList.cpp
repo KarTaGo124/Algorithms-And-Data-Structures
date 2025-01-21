@@ -28,12 +28,15 @@ class CircularDoublyLinkedList {
 private:
     // Pointer to the first element in the list
     Node<T>* sentinel;
+    // tamaño de la lista
+    int tam;
 public:
     // Constructor with a sentinel node
     explicit CircularDoublyLinkedList(){
         sentinel = new Node<T>();
         sentinel->next = sentinel;
         sentinel->prev = sentinel;
+        tam = 0;
     }
     // Destructor
     ~CircularDoublyLinkedList(){
@@ -74,6 +77,7 @@ public:
         new_node->prev = sentinel;
         sentinel->next->prev = new_node;
         sentinel->next = new_node;
+        tam++;
     }
     // Adds a new element at the end of the list
     void push_back(T value) {
@@ -82,6 +86,7 @@ public:
         new_node->prev = sentinel->prev;
         sentinel->prev->next = new_node;
         sentinel->prev = new_node;
+        tam++;
     }
     // Removes the first element in the list
     T pop_front(){
@@ -91,6 +96,7 @@ public:
             T value = toDelete->data;
             sentinel->next = toDelete->next;
             toDelete->next->prev = sentinel;
+            tam--;
             delete toDelete;
             return value;
         }
@@ -103,43 +109,62 @@ public:
             T value = toDelete->data;
             sentinel->prev = toDelete->prev;
             toDelete->prev->next = sentinel;
+            tam--;
             delete toDelete;
             return value;
         }
     }
     // Inserts a new element in the list at a given position
     void insert(T value, int position) {
-        if (position < 0 || position > size()) {
+        if (position < 0 || position > tam) {
             cout << "Cannot insert element at position " << position << endl;
             return;
         }
-        auto new_node = new Node<T>(value);
-        auto temp = sentinel;
-        for (int i = 0; i < position; i++) {
-            temp = temp->next;
-        }
-        new_node->next = temp->next;
-        new_node->prev = temp;
-        temp->next->prev = new_node;
-        temp->next = new_node;
+         if (position == 0) {
+            push_front(value);
+            return;
+        } else if (position == tam) {
+            push_back(value);
+            return;
+        } else {
+            auto new_node = new Node<T>(value);
+            auto temp = sentinel->next;
+            for (int i = 0; i < position; i++) {
+                temp = temp->next;
+            }
+            new_node->next = temp;
+            new_node->prev = temp->prev;
+            temp->prev->next = new_node;
+            temp->prev = new_node;
+            tam++;
+         }
     }
     // Removes the element at a given position in the list
     void remove(int position) {
-        if (position < 0 || position >= size()) {
+        if (position < 0 || position >= tam) {
             cout << "Cannot remove element at position " << position << endl;
             return;
         }
-        auto temp = sentinel->next;
-        for (int i = 0; i < position; i++) {
-            temp = temp->next;
+        if (position == 0) {
+            pop_front();
+            return;
+        } else if (position == tam - 1) {
+            pop_back();
+            return;
+        } else {
+            auto temp = sentinel->next;
+            for (int i = 0; i < position; i++) {
+                temp = temp->next;
+            }
+            temp->prev->next = temp->next;
+            temp->next->prev = temp->prev;
+            delete temp;
+            tam--;
         }
-        temp->prev->next = temp->next;
-        temp->next->prev = temp->prev;
-        delete temp;
     }
     // Returns the element at the specified position in the list
     T operator[](int position){
-        if (position > size()) return -1;
+        if (position > tam) return -1;
         auto temp = sentinel->next;
         for (int i = 0; i < position; i++) {
             temp = temp->next;
@@ -153,21 +178,14 @@ public:
     }
     // Returns the number of elements in the list
     int size(){
-        auto temp = sentinel->next;
-        int i = 0;
-        while(temp != sentinel) {
-            temp = temp->next;
-            i++;
-        }
-        return i;
+        return tam;
     }
     // Clears the list
     void clear(){
         while (sentinel->next != sentinel) {
-            auto toDelete = sentinel->next;
-            sentinel->next = toDelete->next;
-            delete toDelete;
+            pop_front();
         }
+        tam = 0;
     }
     // Reverses the list
     void reverse(){
