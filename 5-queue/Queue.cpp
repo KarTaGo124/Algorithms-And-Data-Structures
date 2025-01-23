@@ -4,15 +4,16 @@
 #include <iostream>
 using namespace std;
 
+template <typename T>
 class Queue {
 private:
-    int *arr;
+    T *arr;
     int frontIndex, rearIndex, capacity;
 
 public:
     explicit Queue(int cap) {
         capacity = cap;
-        arr = new int[capacity];
+        arr = new T[capacity];
         frontIndex = 0;
         rearIndex = -1;
     }
@@ -21,7 +22,7 @@ public:
         delete[] arr;
     }
 
-    void enqueue(int value) {
+    void enqueue(T value) {
         if (rearIndex + 1 == capacity) {
             cout << "Queue is full, cannot enqueue.\n";
             return;
@@ -38,7 +39,7 @@ public:
         frontIndex++;
     }
 
-    [[nodiscard]] int front() const {
+    [[nodiscard]] T front() const {
         if (isEmpty()) {
             throw out_of_range("Queue is empty.");
         }
@@ -67,7 +68,7 @@ public:
 
 int main() {
     cout << "Queue Demo:\n";
-    Queue queue(5);
+    Queue<int> queue(5);
 
     cout << "Enqueue 5\n";
     queue.enqueue(5);

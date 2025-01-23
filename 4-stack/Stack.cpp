@@ -4,16 +4,17 @@
 #include <iostream>
 using namespace std;
 
+template <typename T>
 class Stack {
 private:
-    int *arr;
+    T *arr;
     int topIndex;
     int capacity;
 
 public:
     explicit Stack(int size) {
         capacity = size;
-        arr = new int[capacity];
+        arr = new T[capacity];
         topIndex = -1;
     }
 
@@ -21,7 +22,7 @@ public:
         delete[] arr;
     }
 
-    void push(int value) {
+    void push(T value) {
         if (topIndex + 1 == capacity) {
             cout << "Stack overflow, cannot push.\n";
             return;
@@ -37,7 +38,7 @@ public:
         topIndex--;
     }
 
-    [[nodiscard]] int top() const {
+    [[nodiscard]] T top() const {
         if (isEmpty()) {
             throw out_of_range("Stack is empty.");
         }
@@ -62,7 +63,7 @@ public:
 
 int main() {
     cout << "Stack Demo:\n";
-    Stack stack(10);
+    Stack<int> stack(10);
     cout << "Pushing 5\n";
     stack.push(5);
     cout << "Pushing 3\n";

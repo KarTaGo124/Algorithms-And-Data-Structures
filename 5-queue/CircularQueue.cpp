@@ -4,11 +4,12 @@
 #include <iostream>
 using namespace std;
 
+template <typename T>
 class MyCircularQueue
 {
 private:
     int size;
-    int *queue;
+    T *queue;
     int front;
     int rear;
 
@@ -16,12 +17,12 @@ public:
     MyCircularQueue(int k)
     {
         this->size = k + 1;
-        queue = new int[size];
+        queue = new T[size];
         front = 0;
         rear = 0;
     }
 
-    bool enQueue(int value)
+    bool enQueue(T value)
     {
         if (isFull())
         {
@@ -50,18 +51,18 @@ public:
         }
     }
 
-    int Front()
+    T Front()
     {
         if (!isEmpty())
             return queue[(front + 1) % size];
-        return -1;
+        return T{};
     }
 
-    int Rear()
+    T Rear()
     {
         if (!isEmpty())
             return queue[rear];
-        return -1;
+        return T{};
     }
 
     bool isEmpty()
@@ -91,7 +92,7 @@ public:
 };
 
 int main() {
-    MyCircularQueue circularQueue(3);
+    MyCircularQueue<int> circularQueue(3);
 
     cout << "Enqueue 5" << endl;
     circularQueue.enQueue(5);
