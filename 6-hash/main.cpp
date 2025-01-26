@@ -14,8 +14,8 @@ int main() {
     hashMapInt.remove(2);
     cout << "Valor asociado a la clave 2 después de eliminarla: " << hashMapInt.get(2) << endl;
 
-    cout << "¿La clave 3 existe?: " << (hashMapInt.find(3) ? "Sí" : "No") << endl;
-    cout << "¿La clave 4 existe?: " << (hashMapInt.find(4) ? "Sí" : "No") << endl;
+    cout << "¿La clave 3 existe?: " << (hashMapInt.exists(3) ? "Sí" : "No") << endl;
+    cout << "¿La clave 4 existe?: " << (hashMapInt.exists(4) ? "Sí" : "No") << endl;
 
     hashMapInt.clear();
     cout << "Tamaño después de limpiar: " << hashMapInt.size() << endl;

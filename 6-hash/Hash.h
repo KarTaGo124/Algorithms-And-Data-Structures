@@ -20,25 +20,6 @@ int hashFunction(const T& key) {
     return hash<T>()(key) % SIZE;
 }
 
-int hashFunctionInt(int key) {
-    return key % SIZE;
-}
-
-int hashFunctionChar(const char key) {
-    int hash = 0;
-    hash = (hash * 31 + key) % SIZE;
-    return hash;
-}
-
-int hashFunctionString(const string& key) {
-    int hash = 0;
-    for (char c: key) {
-        hash = (hash * 31 + c) % SIZE;
-    }
-    return hash;
-}
-
-
 template <typename T, typename Q>
 class Hash {
 private:
@@ -89,6 +70,34 @@ public:
         return Q{};
     }
 
+    const Q& operator[](const T& key) const {
+        int index = hashFunction(key);
+        auto current = buckets[index];
+        while (current != nullptr) {
+            if (current->key == key) {
+                return current->value;
+            }
+            current = current->next;
+        }
+        throw std::out_of_range("Key not found");
+    }
+
+    Q& operator[](const T& key) {
+        int index = hashFunction(key);
+        auto current = buckets[index];
+        while (current != nullptr) {
+            if (current->key == key) {
+                return current->value;
+            }
+            current = current->next;
+        }
+        // If the key does not exist, insert a new node with a default value
+        auto newNode = new Node<T, Q>(key, Q{});
+        newNode->next = buckets[index];
+        buckets[index] = newNode;
+        return buckets[index]->value;
+    }
+
     void remove(T key) {
         int index = hashFunction(key);
         auto current = buckets[index];
@@ -108,8 +117,16 @@ public:
         }
     }
 
-    bool find(T key) {
-        return get(key) != Q{};
+    bool exists(T key) {
+        int index = hashFunction(key);
+        auto current = buckets[index];
+        while (current != nullptr) {
+            if (current->key == key) {
+                return true;
+            }
+            current = current->next;
+        }
+        return false;
     }
 
     bool findValue(Q value) {
