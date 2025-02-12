@@ -3,7 +3,7 @@
 int main() {
     Hash<int,int> hashMapInt;
     hashMapInt.put(1, 100);
-    hashMapInt.put(2, 200);
+    hashMapInt[2] = 200;
     hashMapInt.put(3, 300);
     cout << "Valor asociado a la clave 1: " << hashMapInt.get(1) << endl;
     cout << "Valor asociado a la clave 2: " << hashMapInt.get(2) << endl;

@@ -6,11 +6,11 @@
 using namespace std;
 
 template <typename T, typename Q>
-struct Node {
+struct HashNode {
     T key;
     Q value;
-    Node* next;
-    Node(T k, Q v) : key(k), value(v), next(nullptr) {}
+    HashNode* next;
+    HashNode(T k, Q v) : key(k), value(v), next(nullptr) {}
 };
 
 static const int SIZE = 10000;
@@ -23,7 +23,7 @@ int hashFunction(const T& key) {
 template <typename T, typename Q>
 class Hash {
 private:
-    Node<T,Q>* buckets[SIZE]{};
+    HashNode<T,Q>* buckets[SIZE]{};
 
 public:
     Hash() {
@@ -53,7 +53,7 @@ public:
             }
             current = current->next;
         }
-        auto newNode = new Node<T,Q>(key, value);
+        auto newNode = new HashNode<T,Q>(key, value);
         newNode->next = buckets[index];
         buckets[index] = newNode;
     }
@@ -92,7 +92,7 @@ public:
             current = current->next;
         }
         // If the key does not exist, insert a new node with a default value
-        auto newNode = new Node<T, Q>(key, Q{});
+        auto newNode = new HashNode<T, Q>(key, Q{});
         newNode->next = buckets[index];
         buckets[index] = newNode;
         return buckets[index]->value;
@@ -101,7 +101,7 @@ public:
     void remove(T key) {
         int index = hashFunction(key);
         auto current = buckets[index];
-        Node<T,Q>* prev = nullptr;
+        HashNode<T,Q>* prev = nullptr;
         while (current != nullptr) {
             if (current->key == key) {
                 if (prev != nullptr) {
