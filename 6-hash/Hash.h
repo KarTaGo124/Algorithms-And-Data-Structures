@@ -1,9 +1,9 @@
 #ifndef ALGORITHMS_AND_DATA_STRUCTURES_HASH_H
 #define ALGORITHMS_AND_DATA_STRUCTURES_HASH_H
 
-#include <iostream>
-#include <vector>
-using namespace std;
+#include "../2-linked-list/ForwardList.h"
+
+#define SIZE 10000
 
 template <typename T, typename Q>
 struct HashNode {
@@ -12,8 +12,6 @@ struct HashNode {
     HashNode* next;
     HashNode(T k, Q v) : key(k), value(v), next(nullptr) {}
 };
-
-static const int SIZE = 10000;
 
 template <typename T>
 int hashFunction(const T& key) {
@@ -141,17 +139,6 @@ public:
         return false;
     }
 
-    int size() {
-        int count = 0;
-        for (auto current : buckets) {
-            while (current != nullptr) {
-                count++;
-                current = current->next;
-            }
-        }
-        return count;
-    }
-
     void clear() {
         for (auto & bucket : buckets) {
             auto current = bucket;
@@ -164,8 +151,19 @@ public:
         }
     }
 
-    vector<T> getAllKeys() {
-        vector<T> keys;
+    int size() {
+        int count = 0;
+        for (auto current : buckets) {
+            while (current != nullptr) {
+                count++;
+                current = current->next;
+            }
+        }
+        return count;
+    }
+
+    ForwardList<T> getAllKeys() {
+        ForwardList<T> keys;
         for (auto current : buckets) {
             while (current != nullptr) {
                 keys.push_back(current->key);
@@ -175,8 +173,8 @@ public:
         return keys;
     }
 
-    vector<Q> getAllValues() {
-        vector<Q> values;
+    ForwardList<Q> getAllValues() {
+        ForwardList<Q> values;
         for (auto current : buckets) {
             while (current != nullptr) {
                 values.push_back(current->value);

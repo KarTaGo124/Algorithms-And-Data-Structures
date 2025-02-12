@@ -1,13 +1,8 @@
 #ifndef ALGORITHMS_AND_DATA_STRUCTURES_GRAPH_H
 #define ALGORITHMS_AND_DATA_STRUCTURES_GRAPH_H
 
-#include <iostream>
-#include "../2-linked-list/ForwardList.h"
 #include "../6-hash/Hash.h"
 
-using namespace std;
-
-// Estructura para representar una arista
 template <typename T, typename W>
 struct Edge {
     T destination;
@@ -16,53 +11,111 @@ struct Edge {
     Edge(T dest, W w) : destination(dest), weight(w) {}
 };
 
-// Nodo del grafo
 template <typename T, typename W>
 struct GraphNode {
     T data;
-    ForwardList<Edge<T, W>*> neighbors;  // Ahora usamos ForwardList en lugar de List
+    ForwardList<Edge<T, W>*> neighbors;
 
     GraphNode(T value) : data(value) {}
 };
 
-// Grafo genérico
 template <typename T, typename W = int>
 class Graph {
 private:
     Hash<T, GraphNode<T, W>*> adjList;
+    Hash<T, int> colors; // 0: Blanco, 1: Gris, 2: Negro
+    Hash<T, int> discoveryTime;
+    Hash<T, int> finishTime;
+    Hash<T, T> parent;
+    int time;
     bool isDirected;
     bool isWeighted;
 
-public:
-    Graph(bool directed = false, bool weighted = false) : isDirected(directed), isWeighted(weighted) {}
+    void DFSVisit(T u) {
+        colors.put(u, 1); // Gris: visitado pero no finalizado
+        time++;
+        discoveryTime.put(u, time);
 
-    // Agregar un vértice
+        GraphNode<T, W>* node = adjList.get(u);
+        Node<Edge<T, W>*>* current = node->neighbors.getIterator();
+        while (current != nullptr) {
+            T v = current->data->destination;
+            if (!colors.exists(v) || colors.get(v) == 0) {
+                parent.put(v, u);
+                DFSVisit(v);
+            }
+            current = current->next;
+        }
+
+        colors.put(u, 2); // Negro: finalizado
+        time++;
+        finishTime.put(u, time);
+    }
+
+public:
+    Graph(bool directed = false, bool weighted = false) : isDirected(directed), isWeighted(weighted), time(0) {}
+
     void addVertex(T value) {
         if (!adjList.exists(value)) {
             adjList.put(value, new GraphNode<T, W>(value));
         }
     }
 
-    // Agregar una arista con peso opcional
     void addEdge(T v1, T v2, W weight = 1) {
         addVertex(v1);
         addVertex(v2);
 
-        GraphNode<T, W>* node1 = adjList[v1];
+        GraphNode<T, W>* node1 = adjList.get(v1);
         node1->neighbors.push_back(new Edge<T, W>(v2, isWeighted ? weight : 1));
 
         if (!isDirected) {
-            GraphNode<T, W>* node2 = adjList[v2];
+            GraphNode<T, W>* node2 = adjList.get(v2);
             node2->neighbors.push_back(new Edge<T, W>(v1, isWeighted ? weight : 1));
         }
     }
 
-    // Mostrar el grafo
+    void DFS() {
+        ForwardList<T> keys = adjList.getAllKeys();
+        Node<T>* keyNode = keys.getIterator();
+        while (keyNode != nullptr) {
+            colors.put(keyNode->data, 0); // Inicialmente, todos los nodos son blancos
+            parent.put(keyNode->data, T()); // nullptr
+            keyNode = keyNode->next;
+        }
+        time = 0;
+        keyNode = keys.getIterator();
+        while (keyNode != nullptr) {
+            if (colors.get(keyNode->data) == 0) {
+                DFSVisit(keyNode->data);
+            }
+            keyNode = keyNode->next;
+        }
+    }
+
+    void printDFSInfo() {
+        cout << "Nodo | Descubrimiento | Finalización | Padre" << endl;
+        cout << "--------------------------------------" << endl;
+        ForwardList<T> keys = adjList.getAllKeys();
+        Node<T>* keyNode = keys.getIterator();
+        while (keyNode != nullptr) {
+            T node = keyNode->data;
+            cout << node << "\t " << discoveryTime.get(node) << "\t\t "
+                 << finishTime.get(node) << "\t\t ";
+            if (parent.get(node) == T())
+                cout << "-";
+            else
+                cout << parent.get(node);
+            cout << endl;
+            keyNode = keyNode->next;
+        }
+    }
+
     void printGraph() {
-        vector<T> keys = adjList.getAllKeys();
-        for (T key : keys) {
-            cout << key << " -> ";
-            GraphNode<T, W>* node = adjList[key];
+        ForwardList<T> keys = adjList.getAllKeys();
+        Node<T>* keyNode = keys.getIterator();
+        while (keyNode != nullptr) {
+            cout << keyNode->data << " -> ";
+            GraphNode<T, W>* node = adjList.get(keyNode->data);
             Node<Edge<T, W>*>* current = node->neighbors.getIterator();
             while (current != nullptr) {
                 cout << "(" << current->data->destination;
@@ -73,20 +126,22 @@ public:
                 current = current->next;
             }
             cout << endl;
+            keyNode = keyNode->next;
         }
     }
 
-    // Destructor para liberar memoria
     ~Graph() {
-        vector<T> keys = adjList.getAllKeys();
-        for (T key : keys) {
-            GraphNode<T, W>* node = adjList[key];
+        ForwardList<T> keys = adjList.getAllKeys();
+        Node<T>* keyNode = keys.getIterator();
+        while (keyNode != nullptr) {
+            GraphNode<T, W>* node = adjList.get(keyNode->data);
             Node<Edge<T, W>*>* current = node->neighbors.getIterator();
             while (current != nullptr) {
                 delete current->data;
                 current = current->next;
             }
             delete node;
+            keyNode = keyNode->next;
         }
     }
 };

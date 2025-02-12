@@ -1,28 +1,29 @@
-#include <iostream>
 #include "Graph.h"
 
-using namespace std;
-
 int main() {
-    // Grafo no dirigido sin pesos
-    Graph<string> g;
+    Graph<string> g(true);
+
+    g.addVertex("A");
+    g.addVertex("B");
+    g.addVertex("C");
+    g.addVertex("D");
+    g.addVertex("E");
+
     g.addEdge("A", "B");
     g.addEdge("A", "C");
     g.addEdge("B", "D");
     g.addEdge("C", "D");
+    g.addEdge("D", "E");
 
-    cout << "Grafo no dirigido sin pesos:\n";
+    cout << "Grafo:" << endl;
     g.printGraph();
+    cout << endl;
 
-    // Grafo dirigido con pesos tipo double
-    Graph<int, double> g2(true, true);
-    g2.addEdge(1, 2, 2.5);
-    g2.addEdge(1, 3, 3.1);
-    g2.addEdge(2, 4, 1.8);
-    g2.addEdge(3, 4, 4.2);
+    cout << "Ejecutando DFS..." << endl;
+    g.DFS();
 
-    cout << "\nGrafo dirigido ponderado:\n";
-    g2.printGraph();
+    cout << "\nResultados del DFS:" << endl;
+    g.printDFSInfo();
 
     return 0;
 }
