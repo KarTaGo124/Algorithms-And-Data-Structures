@@ -3,7 +3,7 @@
 
 #include "../2-linked-list/ForwardList.h"
 
-#define SIZE 10000
+#define SIZE 100000
 
 template <typename T, typename Q>
 struct HashNode {

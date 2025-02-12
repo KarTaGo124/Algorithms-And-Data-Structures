@@ -74,6 +74,26 @@ public:
         }
     }
 
+    void initializeColors() {
+        ForwardList<T> keys = adjList.getAllKeys();
+        Node<T>* keyNode = keys.getIterator();
+        while (keyNode != nullptr) {
+            colors.put(keyNode->data, 0); // Blanco: No visitado
+            parent.put(keyNode->data, T()); // Nil
+            keyNode = keyNode->next;
+        }
+        time = 0;
+    }
+
+    void DFSFrom(T start) {
+        if (!adjList.exists(start)) return;
+        DFSVisit(start);
+    }
+
+    int getColor(T node) {
+        return colors.exists(node) ? colors.get(node) : 0;
+    }
+
     void DFS() {
         ForwardList<T> keys = adjList.getAllKeys();
         Node<T>* keyNode = keys.getIterator();
@@ -142,6 +162,40 @@ public:
             }
             delete node;
             keyNode = keyNode->next;
+        }
+    }
+
+    void DFSFromAlternative(T source, Hash<T, bool>& visited) {
+        if (visited.exists(source) && visited.get(source)) return;
+        visited.put(source, true);
+        GraphNode<T, W>* node = adjList.get(source);
+        Node<Edge<T, W>*>* current = node->neighbors.getIterator();
+        while (current != nullptr) {
+            DFSFromAlternative(current->data->destination, visited);
+            current = current->next;
+        }
+    }
+
+    void DFSAlternative(Hash<T, bool>& visited) {
+        ForwardList<T> keys = adjList.getAllKeys();
+        Node<T>* keyNode = keys.getIterator();
+        while (keyNode != nullptr) {
+            if (!visited.exists(keyNode->data) || !visited.get(keyNode->data)) {
+                DFSVisitAlternative(keyNode->data, visited);
+            }
+            keyNode = keyNode->next;
+        }
+    }
+
+    void DFSVisitAlternative(T node, Hash<T, bool>& visited) {
+        visited.put(node, true); // Mark as visited
+        GraphNode<T, W>* graphNode = adjList.get(node);
+        Node<Edge<T, W>*>* current = graphNode->neighbors.getIterator();
+        while (current != nullptr) {
+            if (!visited.exists(current->data->destination) || !visited.get(current->data->destination)) {
+                DFSVisitAlternative(current->data->destination, visited);
+            }
+            current = current->next;
         }
     }
 };
