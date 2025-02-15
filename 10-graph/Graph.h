@@ -66,10 +66,23 @@ public:
         addVertex(v2);
 
         GraphNode<T, W>* node1 = adjList.get(v1);
+        // Si ya existe, no se inserta
+        Node<Edge<T, W>*>* current = node1->neighbors.getIterator();
+        while (current != nullptr) {
+            if (current->data->destination == v2) return;
+            current = current->next;
+        }
+
         node1->neighbors.push_back(new Edge<T, W>(v2, isWeighted ? weight : 1));
 
         if (!isDirected) {
             GraphNode<T, W>* node2 = adjList.get(v2);
+            // Si ya existe no se inserta
+            current = node2->neighbors.getIterator();
+            while (current != nullptr) {
+                if (current->data->destination == v1) return;
+                current = current->next;
+            }
             node2->neighbors.push_back(new Edge<T, W>(v1, isWeighted ? weight : 1));
         }
     }
