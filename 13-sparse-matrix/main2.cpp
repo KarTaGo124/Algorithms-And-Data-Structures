@@ -1,11 +1,11 @@
 #include <iostream>
-#include "SparseMatrix.h"
+#include "CircularSparseMatrix.h"
 
 using namespace std;
 
 int main() {
     // 1. Crear una matriz dispersa 3x3 y agregar elementos
-    SparseMatrix<int> mat1(3, 3);
+    CircularSparseMatrix<int> mat1(3, 3);
     mat1.set(0, 0, 5);
     mat1.set(0, 2, 3);
     mat1.set(1, 1, 7);
@@ -32,7 +32,7 @@ int main() {
     cout << endl;
 
     // 5. Crear una segunda matriz para realizar operaciones
-    SparseMatrix<int> mat2(3, 3);
+    CircularSparseMatrix<int> mat2(3, 3);
     mat2.set(0, 0, 2);
     mat2.set(0, 2, 1);
     mat2.set(1, 1, 3);
@@ -52,31 +52,31 @@ int main() {
     cout << endl;
 
     // 7. Sumar matrices
-    SparseMatrix<int> suma = mat1 + mat2;
+    CircularSparseMatrix<int> suma = mat1 + mat2;
     cout << "Suma (Matriz 1 + Matriz 2):" << endl;
     suma.display();
     cout << endl;
 
     // 8. Restar matrices
-    SparseMatrix<int> resta = mat1 - mat2;
+    CircularSparseMatrix<int> resta = mat1 - mat2;
     cout << "Resta (Matriz 1 - Matriz 2):" << endl;
     resta.display();
     cout << endl;
 
     // 9. Multiplicar matriz por un escalar
-    SparseMatrix<int> escalar = mat1 * 2;
+    CircularSparseMatrix<int> escalar = mat1 * 2;
     cout << "Multiplicación de Matriz 1 por 2:" << endl;
     escalar.display();
     cout << endl;
 
     // 10. Multiplicar dos matrices (las dos son 3x3)
-    SparseMatrix<int> mult = mat1 * mat2;
+    CircularSparseMatrix<int> mult = mat1 * mat2;
     cout << "Multiplicación (Matriz 1 * Matriz 2):" << endl;
     mult.display();
     cout << endl;
 
     // 11. Transponer una matriz
-    SparseMatrix<int> trans = mat1.transpose();
+    CircularSparseMatrix<int> trans = mat1.transpose();
     cout << "Transpuesta de la Matriz 1:" << endl;
     trans.display();
     cout << endl;

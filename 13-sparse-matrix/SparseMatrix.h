@@ -208,6 +208,10 @@ public:
         delete current_row;
     }
 
+    T operator()(int row, int col) const {
+        return get(row, col);
+    }
+
     void display() const {
         for (int i = 0; i < rows; ++i) {
             auto row = row_heads;
@@ -225,6 +229,42 @@ public:
             }
             cout << "\n";
         }
+    }
+
+    bool operator==(const SparseMatrix<T> &other) const {
+        if (rows != other.rows || cols != other.cols) {
+            return false;
+        }
+
+        for (auto row = row_heads; row; row = row->next) {
+            for (auto elem = static_cast<Element<T>*>(row->first); elem; elem = elem->next_row) {
+                if (other.get(elem->row, elem->col) != elem->value)
+                    return false;
+            }
+        }
+
+        for (auto row = other.row_heads; row; row = row->next) {
+            for (auto elem = static_cast<Element<T>*>(row->first); elem; elem = elem->next_row) {
+                if (get(elem->row, elem->col) != elem->value)
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    bool operator!=(const SparseMatrix<T> &other) const {
+        return !(*this == other);
+    }
+
+    SparseMatrix<T> transpose() const {
+        SparseMatrix<T> result(cols, rows);
+        for (auto row = row_heads; row; row = row->next) {
+            for (auto elem = static_cast<Element<T>*>(row->first); elem; elem = elem->next_row) {
+                result.set(elem->col, elem->row, elem->value);
+            }
+        }
+        return result;
     }
 
     SparseMatrix<T> operator+(const SparseMatrix<T> &other) {
