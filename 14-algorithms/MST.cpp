@@ -5,7 +5,7 @@
 #include <iostream>
 using namespace std;
 #include "../11-disjoint-set/DisjointSet.h"
-#include "Heap.h"
+#include "../9-heap/Heap.h"
 
 vector<vector<pair<int, int>>> kruskal(vector<vector<pair<int, int>>>& graph, int V) {
     DisjointSet ds(V);

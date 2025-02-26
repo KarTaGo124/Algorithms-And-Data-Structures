@@ -5,7 +5,7 @@
 #include <limits>
 using namespace std;
 
-#include "Heap.h"
+#include "../9-heap/Heap.h"
 
 const double INF = numeric_limits<double>::infinity();
 
@@ -56,33 +56,70 @@ void Relax(int u, int v, double weight, vector<double>& d, vector<int>& pi) {
     }
 }
 
-// Dijkstra's algorithm (no negative-weight edges)
+/*
+ * Comparador para el heap.
+ * En vez de comparar directamente el valor de u y v,
+ * usamos d[u] y d[v], que son las distancias.
+ *
+ * Queremos un min-heap por distancia, así que devolvemos true
+ * si d[u] < d[v].
+ */
+struct DistCompare {
+    const vector<double>& dist;  // referencia a distancias
+    DistCompare(const vector<double>& d) : dist(d) {}
+
+    // Para un min-heap, retorna true si 'u' tiene distancia menor que 'v'
+    bool operator()(int u, int v) const {
+        return dist[u] < dist[v];
+    }
+};
+
+// Dijkstra que usa solo enteros en el heap (los nodos),
+// pero los compara según d[u].
 void Dijkstra(const Graph& graph, int s) {
     int n = graph.getVertices();
-    vector<double> d(n);
-    vector<int> pi(n);
-    InitializeSingleSource(d, pi, s);
+    vector<double> d(n, INF);
+    vector<int> pi(n, -1);
+    vector<bool> visited(n, false);
 
-    Heap<pair<double, int>, greater<>> minHeap(n);
-    minHeap.pushOrUpdate({0, s});
+    // Distancia al nodo inicial es 0
+    d[s] = 0.0;
+
+    // Creamos el comparador, pasándole la referencia al vector de distancias
+    DistCompare comp(d);
+    // Instanciamos el heap con ese comparador
+    Heap<int, DistCompare> minHeap(comp);
+
+    // Insertamos el nodo inicial
+    minHeap.push(s);
 
     while (!minHeap.empty()) {
-        auto [distance, u] = minHeap.pop();
-        if (distance > d[u]) continue;
+        // Extraemos el nodo u con la menor distancia (según DistCompare)
+        int u = minHeap.pop();
 
-        for (const auto& edge : graph.getAdjList()[u]) {
+        // Si ya fue visitado, lo ignoramos (posible duplicado en el heap)
+        if (visited[u]) continue;
+        visited[u] = true;
+
+        // Relajamos las aristas que salen de u
+        for (auto& edge : graph.getAdjList()[u]) {
             int v = edge.destination;
-            double weight = edge.weight;
-            if (d[v] > d[u] + weight) {
-                d[v] = d[u] + weight;
+            double w = edge.weight;
+            if (!visited[v] && d[u] + w < d[v]) {
+                d[v] = d[u] + w;
                 pi[v] = u;
-                minHeap.pushOrUpdate({d[v], v});
+                // Insertamos de nuevo el nodo v en el heap
+                // (si estaba antes, será un duplicado obsoleto)
+                minHeap.push(v);
             }
         }
     }
 
+    // Mostramos resultados
     for (int i = 0; i < n; ++i) {
-        cout << "Distance to " << i << ": " << (d[i] == INF ? -1 : d[i]) << "\n";
+        cout << "Distance to " << i << ": ";
+        if (d[i] == INF) cout << -1 << "\n";
+        else cout << d[i] << "\n";
     }
 }
 
